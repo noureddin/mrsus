@@ -1,0 +1,370 @@
+/* Amiri Quran 0.112, SIL OFL 1.1; https://github.com/alif-type/amiri */
+@font-face {
+  font-family: AmiriQuran;
+  font-style: normal;
+  font-weight: 400;
+  src: local('Amiri Quran'), url('AmiriQuran.woff2') format('woff2'), url('AmiriQuran.woff') format('woff');
+  font-display: swap;
+}
+
+/* KacstOne 5.0 (GNU GPL v2) is from: https://sourceforge.net/projects/arabeyes/files/Fonts/ */
+/* It is subsetted and converted to WOFF2 using glyphhanger */
+@font-face {
+  font-family: KacstOne;
+  font-style: normal;
+  font-weight: 400;
+  src: local('KacstOne'), url('KacstOne-subset.woff2') format('woff2'), url('KacstOne-subset.woff') format('woff');
+  font-display: swap;
+}
+
+* { font-family: KacstOne, serif; font-size: inherit /* primary for select/button/etc */ }
+
+#p, #p *, #x *, #endmsg { font-family: AmiriQuran }
+
+.dst > p { line-height: 1.5 }
+.src > p { line-height: 1.8 }
+.quran.src > p { font-family: AmiriQuran !important; padding-bottom: 1em; line-height: initial }
+mark { font-family: inherit }
+
+/* lightmode colors are defined in body {} */
+/* darkmode colors, if different, are defined in body.dark {} */
+
+/* global */
+body {
+  --bg: #f8f8f8;
+  --fg: #000;
+  --tl: 0.6;      /* book title opacity */
+  --fa: 0.65;     /* opacity of icon btns in bookfilter */
+  --mk: #ff06;    /* <mark>: the matching parts of a result */
+  --br: #800;     /* unit border */
+  /* --sb: #eee3eb;  /1* src bg & bigbtn bg *1/ */
+  /* --sb: #f8e8e8;  /1* src bg & bigbtn bg *1/ */
+  --sb: #f8f0f4;  /* src bg & bigbtn bg */
+  --F:  #444;     /* footer fg */
+  --f:  #e001;    /* bookfilter bg */
+  --h:  #e002;    /* h1 & h2 bg (in info) */
+}
+body.dark {
+  --bg: #100;
+  --fg: #ddd;
+  --tl: 0.8;
+  --mk: #650;
+  --br: #a00;
+  --sb: #400;
+  --F:  #ddd;
+  --f:  #f002;
+  --h:  #f004;
+}
+
+/* prev & next bigbtns */
+body {
+  /* their primary background is --sb (src txt bg) */
+  --ba: 0.5;  /* arrow opacity */
+  --bh: brightness(1.075);  /* buttons hover (filter) */
+  --bs: 0 0 0.25em #0008,  /* buttons shadow */
+    inset 0  0.5em 1em #fff,
+    inset 0 -0.5em 1em #0004;
+  --SH: 1.75em;  /* btn's svg height */
+}
+body.dark {
+  --ba: 0.75;
+  --bh: brightness(1.25);
+  --bs: 0 0 0.2em #fffa,
+      inset 0  0.25em 1em #fff4,
+      inset 0 -0.25em 1em #000f;
+}
+
+@media screen and (max-width: 299px) {
+body {
+  --bs: 0 0 0.15em #0008,  /* buttons shadow */
+    inset 0  0.25em 0.5em #fff,
+    inset 0 -0.25em 0.5em #0004;
+}
+body.dark {
+  --bs: 0 0 0.1em #fffa,
+      inset 0  0.25em 0.5em #fff4,
+      inset 0 -0.25em 0.5em #000f;
+}
+}
+
+/* all links (except read & info buttons) */
+body {
+  --L: #24a;
+  --H: #080;
+  --A: #c60;
+}
+body.dark {
+  --L: #9ce;
+  --H: #aeb;
+  --A: #eda;
+}
+
+a { color: var(--L) }
+a:hover { color: var(--H) }
+a:active { color: var(--A) }
+
+/* ".tl a" has a (usually-colorful) emoji (a wire globe, U+1F310); thus I need to override it */
+.tl a { color: transparent; text-shadow: 0 0 0 var(--L) }
+.tl a:hover { color: transparent; text-shadow: 0 0 0 var(--H) }
+.tl a:active { color: transparent; text-shadow: 0 0 0 var(--A) }
+
+          a.bh { color: #66bc }
+body.dark a.bh { color: #88cc }
+          a.bh:hover { color: #40c }
+body.dark a.bh:hover { color: #f8f }
+          a.bh:active { color: #f00 }
+body.dark a.bh:active { color: #fcf }
+
+#f a.bh { opacity: var(--fa) }
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    scroll-behavior: auto !important;
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+body.dark select, body.dark input, body.dark button { filter: invert(1) hue-rotate(180deg) }
+
+html, body { background: var(--bg); color: var(--fg); scroll-behavior: smooth }
+
+body { font-size: 20px; margin-top: 1em; transition: 0.5s margin-top }
+/* @media (max-width: 320px) { body { font-size: 18px } } */
+
+body > center {
+  width: 35em;
+  max-width: 95vw;
+  margin: 2em auto 0;
+  box-sizing: border-box;
+}
+
+mark { background: var(--mk); color: inherit }
+
+/*
+*/
+
+#body { min-height: calc(100vh - 8em) }  /* make the footer stick near the bottom if short page */
+
+footer {
+  font-size: 80%;
+  margin: 0;
+  margin-top: 2em;
+  padding: 0.5em 1em 0.5em 1em;
+  box-sizing: border-box;
+  border-top: 1px solid var(--B);
+  color: var(--F);
+  transition: opacity 1.5s;
+  opacity: 0.35;
+}
+
+footer:hover { opacity: 1 }
+
+a { text-decoration: none }
+a:hover,
+a:focus,
+a:active { text-decoration: underline }
+
+label { display: inline-block }  /* don't break over lines */
+footer span { margin-left: 1em }
+
+/* books filter */
+#f {
+  display: block;
+  background: var(--f);
+  text-align: right;
+  margin: 0.5em 0;
+  padding: 0.25em 0.5em 0.5em;
+}
+#f label {
+  margin: 0.5em 1em 0 0;
+}
+label, summary { cursor: pointer }
+details[open] > summary { opacity: 0.5; transition: opacity 0.5s }
+details[open] > summary:hover { opacity: 1 }
+
+/* button { */
+/*   touch-action: manipulation; /1* disable double-tap zooming; https://stackoverflow.com/a/53236027 *1/ */
+/*   cursor: pointer; */
+/* } */
+
+/* button:disabled { cursor: not-allowed } */
+
+#spinner { animation: spin 1.6s infinite linear; stroke: currentColor }
+@keyframes spin {
+    0% { transform: rotate(0turn) }
+  100% { transform: rotate(1turn) }
+}
+#spinner-svg {
+    width: 4em;
+    margin: 1em auto;
+    vertical-align: bottom;
+}
+
+/*
+*/
+
+#s {
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+}
+
+#q {
+  margin-left: 0.5em;
+  flex-grow: 2;
+  text-align: center;
+  min-width: 0;
+}
+
+/* search button */
+.srcttl { font-family: inherit; color: inherit }
+#sb { width: initial; padding: 0 1em }
+@media (max-width: 580px) { #sb { padding: 0 0.25em } }
+@media (max-width: 440px) {
+#q { margin-left: 0.25em }
+.srcttl {  /* .sr-only -- hide visually but keep it for screenreaders */
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+}
+
+/* units (in search results and in reading mode) */
+
+.ac {
+  outline: 1px solid var(--br);
+  border-radius: 0.5em;
+  margin: 1em 0;
+  overflow: hidden;
+}
+
+.ac > div {
+  direction: ltr;
+  text-align: left;
+  padding: 1%;
+}
+
+.ac > div:first-child {
+  background: var(--sb);
+  direction: rtl;
+  text-align: right;
+  padding: 0 1%;
+}
+
+.ac > div {
+  border-bottom: 1px solid var(--br);
+}
+
+hr {
+  border: 1px dashed var(--br);
+  margin: 2em 0;
+}
+
+.ac > div:first-child > .tl {
+  padding: 0.5em 1.8em 0.75em 3.8em;
+  /* padding-right = .info width + pad = 1.3em + 0.5em = 1.8em */
+  /* padding-left  = .read width + 0   = 2.5em */
+  position: relative;
+}
+
+.bh { position: absolute; fill: currentColor }
+
+.read { top: 0.1em; left:  0.15em; width: 2.5em }
+.info { top: 0.5em; right: 0.30em; width: 1.3em }
+
+#f .info {
+  position: relative;
+  top: 0.25em; right: 0.35em;
+}
+#f .info svg {
+  width: 1em;
+}
+
+.ac > .dst > .tl {
+  font-style: italic;
+  padding: 0.5em 0.5em 0.5em 0.5em;
+}
+
+.tl a { font-style: normal }
+
+.tl {
+  font-size: 75%;
+  opacity: var(--tl);
+  border-bottom: 0.1em dotted currentColor;
+}
+
+p { margin: 0.5em }
+
+.fn {
+  font-size: 75%;
+  opacity: var(--tl);
+}
+
+#r > center:first-child {
+  margin-top: 1em;
+}
+
+/* read page */
+
+.bigbtn {
+  width: 35%;
+}
+.bigbtn > svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 4px;
+  opacity: var(--ba);
+  height: var(--SH);
+  position: relative;
+  margin: calc((3em - var(--SH)) / 2) 0 0 0;  /* 3em is .bigbtn's height */
+  padding: 0;
+}
+
+.bigbtn {
+  background: var(--sb);
+  border-radius: 1em;
+  box-sizing: border-box;
+  height: 3em;
+  padding: 0;
+  margin: 1.5em 0;
+  position: relative;
+  transition: 0.25s filter;
+}
+.bigbtn:before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 1em;
+  margin: 0;  /* counter the padding of the parent */
+  box-shadow: var(--bs);
+}
+
+.bigbtn:hover, .bigbtn:active {
+  filter: var(--bh);
+  cursor: pointer;
+}
+
+/* info page */
+.toc {
+  text-align: right;
+  margin-right: 5%;
+  color: #888;
+}
+
+dl { display: table; width: 100% }
+dl > span { display: table-row }
+dt, dd { display: table-cell }
+dt { width: 4em; opacity: var(--tl) }
+
+h1, h2 { font-weight: normal; background: var(--h) }
+h1 { font-size: 150%; line-height: 2 }
+h2 { font-size: 125% }

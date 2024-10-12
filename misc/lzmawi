@@ -1,0 +1,46 @@
+#!/bin/bash
+
+# compresses with the smallest level that achieves the highest compression
+
+base="$1"
+ext=${2:-lzma}  # or xz
+
+name="${base##*/}"  # for printing
+
+case "$ext" in lzma|xz);; *)
+  printf 'expected "lzma" or "xz" for the second argument; got: %s\n' "$2" >&2
+  exit 2
+  ;;
+esac
+
+if ! [ -e "$1" ]; then
+  printf 'no such file: %s\n' "$1" >&2
+  exit 1
+else
+  rm -f "$base.$ext"  # just in case
+  printf '\r\e[K%s: ' "$name"
+  min_lvl=$(
+    for i in {0..9}; do
+      for e in '' e; do
+        printf '%020d %s%s\n' \
+          $(xz --keep -$i$e --format=$ext "$base" --stdout | wc --bytes) \
+          $i $e &
+      done
+    done | sort | head -n 1 | sed 's/.* //')
+fi
+
+nformat() {  # reads from stdin; converts 12345678.9098 to 12 345,678.909
+  sed -E '
+    :a; s/([0-9])([0-9]{6}[. ]|[0-9]{6}$)/\1 \2/; ta  # add a space every six digits
+    s/([0-9]{3}|^[0-9]+)([0-9]{3})/\1,\2/g  # add a comma every three digits inside a group-of-six
+    s/(\....).*/\1/  # keep only three decimal digits (if there are more)
+  '
+}
+
+xz --keep -$min_lvl --format=$ext "$base"
+size="$(printf '%s' "$(stat -c %s "$base.$ext")" | nformat)"
+
+# out="$base.$ext"
+out="$name.$ext"
+printf '\r\e[K"%s" %s bytes (level: %s)\n' "$out" "$size" $min_lvl
+

@@ -1,0 +1,34 @@
+<!doctype html>
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<<meta>>
+<<style>>
+</head>
+<body>
+<!-- follow system prefs, until the page loads and the scripts execute and the user-overriding (if any) is retrieved. see init_dark() -->
+<script>document.body.className=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':''</script>
+
+<center>
+<div id="body">
+<div id="s"><input id="q" dir="auto"><button id="sb">🔍<span class="srcttl"> ابحث</span></button></div>
+<details id="f" open><summary>تحديد الكتب المراد البحث فيها</summary><<bookfilter>></details>
+<div id="r"></div>
+</div>
+
+<footer>
+<p>
+<span>
+هذا التطبيق مستوحى من&nbsp;<a href="https://rasaif.com/">الرصائف</a>،
+وهو&nbsp;<a href="https://github.com/nourddin/mrsus/">حر&nbsp;بالكامل</a>.
+انظر&nbsp;<a href="https://github.com/nourddin/mrsus/blob/main/CONTRIBUTING-ar.md">دليل&nbsp;المساهمة</a>.
+</span>
+<label><input id="dark" type="checkbox">&ensp;الوضع المظلم</label>
+</p>
+</footer>
+</center>
+<<script>>
+</body>
+</html>
+
