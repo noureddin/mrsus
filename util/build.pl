@@ -96,29 +96,14 @@ for my $name (map s,.*/,,r, glob 'data/*') {
 
 ### static files {{{1
 
-### favicon
-
-if (needed "docs/favicon.svg" => "static/favicon.svg") {
-  # minify, don't copy
-  make_file "docs/favicon.svg", '>',
-    slurp("static/favicon.svg")
-      =~ s/<!--.*-->//gr
-      =~ s/\s+/ /gr
-      =~ s/> </></gr
-      =~ s| />|/>|gr
-      =~ s/^ | $//gr
-}
-
-# TODO: added PNGs
-
-### copying static files
-
 sub stapy(_) { my ($src) = @_;  # "stapy" = "static" (n) + "copy (v)"
   my $dst = $src =~ s,.*/,docs/,r;
   if (needed $dst => $src) {
     copy $src => $dst or die "Copy failed: $!";
   }
 }
+
+stapy for 'static/favicon.svg';  # TODO: added PNGs
 
 stapy for glob 'static/fonts/* static/data/*.zst';
 
