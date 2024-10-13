@@ -22,7 +22,7 @@ sub write_file {
 sub make_file { write_file(reverse @_) }
 
 sub slurp(_) { local $/; open my $f, '<', $_[0]; return scalar <$f> }
-sub slurp_xz(_) { local $/; open my $f, '-|', "xz -dc '$_[0]'"; return scalar <$f> }
+sub slurp_zstd(_) { local $/; open my $f, '-|', "zstdcat '$_[0]'"; return scalar <$f> }
 
 sub mtime(_) { (stat($_[0]))[9] }
 
@@ -51,7 +51,7 @@ use Serialize;
 use Utils;
 use Deno;
 
-### building /static/data/*.lzma from /data/* {{{1
+### building /static/data/*.zst from /data/* {{{1
 
 # make sure output directories exist
 -e or mkdir for 'docs', 'static/data';
@@ -70,15 +70,15 @@ my %hash;
 for my $name (map s,.*/,,r, glob 'data/*') {
   my $in = "data/$name";
   my $o = "static/data/$name";
-  my $outz = "$o.lzma";
+  my $outz = "$o.zst";
   my $meta_cache = "static/data/.$name.meta.json";
   #
   if (needed $outz => $in or needed $meta_cache => $in) {
     my @parse = parse slurp $in;
     my $ser = serialize(@parse);
-    if (!-e $outz || hashstr(slurp_xz($outz)) ne hashstr($ser)) {
+    if (!-e $outz || hashstr(slurp_zstd($outz)) ne hashstr($ser)) {
       write_file $ser, '>', $o;
-      system 'bash', 'misc/lzmawi', $o;  # select best compression
+      system 'zstd', '-k', '-9', $o;
       unlink $o;
     }
     else {
@@ -120,7 +120,7 @@ sub stapy(_) { my ($src) = @_;  # "stapy" = "static" (n) + "copy (v)"
   }
 }
 
-stapy for glob 'static/fonts/* static/data/*.lzma';
+stapy for glob 'static/fonts/* static/data/*.zst';
 
 ### preamble of generating index.html {{{1
 
@@ -137,12 +137,22 @@ warn "data file not included: $_; expected" for
 
 my $js_debug = 0;  # set to 1 for debug, to 0 for prod
 
+sub minjs_file {  # takes a path of js code, and returns its content minified
+  return $js_debug ? slurp $_[0] : uglifyjs $_[0];
+}
+
+sub minjs {  # takes a string of js code, and returns it minified
+  my $path = make_tempfile_with @_;
+  my $script = minjs_file $path;
+  unlink $path;
+  return $script;
+}
+
 my @scripts = map s,^,js/,r, grep !/!/, qw[
   utils.js
   elems.js
   dom.js
   deserialize.js
-  lzma-d-min.js
   z.js
   read.js
   info.js
@@ -151,9 +161,6 @@ my @scripts = map s,^,js/,r, grep !/!/, qw[
 ];
 
 die "script file not found: $_; expected" for grep { ! -e } @scripts;
-
-# .lzma-d-min.js from LZMA-JS by Nathan Rugg; v2.3.0; License: MIT.
-# https://github.com/LZMA-JS/LZMA-JS/blob/master/src/lzma-d-min.js
 
 #
 
@@ -222,22 +229,29 @@ $html =~ s{<<style>>}{<style>$style</style>}g;
 
 # script
 
-my $scripts_path = make_tempfile_with
+my $script = minjs
   "const meta = ".(tojson \%meta)."\n",  # this is usually safe
   "const tocs = ".(tojson \%tocs)."\n",  # this is usually safe
   "const hash = ".(tojson \%hash)."\n",  # this is usually safe
   (map { "const el_$_ = Qid('$_')\n" } @ids),
   (sprintf "const bids = [%s]\n", join ',', map { "'$_'" } @bids),
-  (map { slurp } @scripts);
-
-my $script = $js_debug
-  ? slurp $scripts_path
-  : uglifyjs $scripts_path
-  ;
-
-unlink $scripts_path;
+  (join "\n", map { slurp } @scripts);
 
 $html =~ s{<<script>>}{<script>"use strict";$script</script>};
 
 # end
 write_file $html, '>', $HTML_OUT;
+
+### worker-related files {{{1
+
+stapy 'js/fzstd-0.1.1.js';
+# stapy 'js/lzma-d-min.js';
+
+make_file 'docs/worker.js', '>', minjs_file 'js/worker.js';
+
+# lzma-d-min.js from LZMA-JS by Nathan Rugg; v2.3.0; License: MIT.
+# https://github.com/LZMA-JS/LZMA-JS/blob/master/src/lzma-d-min.js
+
+# fzstd-0.1.1.js from fzstd by 101arrowz; v0.1.1; License: MIT.
+# https://github.com/101arrowz/fzstd
+

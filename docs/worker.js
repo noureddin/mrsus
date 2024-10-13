@@ -1,0 +1,1 @@
+importScripts("fzstd-0.1.1.js");let a=".zst?h=",r=e=>(new TextDecoder).decode(fzstd.decompress(e)),n=new Set;onmessage=e=>{let[t,s]=e.data,d=t+a+s;n.has(t)||(n.add(t),fetch(d).then(e=>e.ok?e.arrayBuffer():null).then(e=>{n.delete(t),postMessage([t,r(new Uint8Array(e))])}))};

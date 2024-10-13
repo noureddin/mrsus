@@ -65,7 +65,9 @@ For searching the Quran and reading *tafasir* and translations, or testing your 
 
 All source code is under the terms of Creative Commons Zero (equivalent to Public Domain), except for the following library:
 
-- [`lzma-d-min.js` from LZMA-JS](https://github.com/LZMA-JS/LZMA-JS/blob/master/src/lzma-d-min.js) by Nathan Rugg; v2.3.0; License: MIT.
+<!-- - [`lzma-d-min.js` from LZMA-JS](https://github.com/LZMA-JS/LZMA-JS/blob/master/src/lzma-d-min.js) by Nathan Rugg; v2.3.0; License: MIT. -->
+
+- [`fzstd-0.1.1.js` from fzstd by 101arrowz](https://github.com/101arrowz/fzstd); v0.1.1; License: MIT.
 
 Other resources:
 
