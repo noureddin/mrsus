@@ -99,6 +99,10 @@ body.dark {
   --A: #eda;
 }
 
+a > span { opacity: 0.5 }
+body.dark
+a > span { opacity: 0.65 }
+
 a { color: var(--L) }
 a:hover { color: var(--H) }
 a:active { color: var(--A) }

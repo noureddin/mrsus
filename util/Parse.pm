@@ -68,6 +68,7 @@ sub parse {  # {{{1
   my $meta = _parse_meta($META);
   my @ids = keys %$meta;
   my ($body, $titles) = _parse_body($BODY, @ids);
+  $meta->{''}{N} = scalar @$body;
   return $meta, $body, $titles
 }
 

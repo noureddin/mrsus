@@ -27,6 +27,15 @@ const info = (function () {
     el_r.append(dl)
   }
 
+  const make_toc_elem = (text, href, length) => {
+    const li = document.createElement('li')
+    const a = document.createElement('a')
+    a.href = href
+    a.innerHTML = text + ' <span>(' + toarab(length) + ')</span>'
+    li.append(a)
+    return li
+  }
+
   function show_all (bid) {
     el_r.innerHTML = ''
 
@@ -34,10 +43,14 @@ const info = (function () {
     for (let t of trid(bid)) { show_info(bid, t) }
 
     // toc
-    el_r.append(mk_el('h2', 'جدول المحتويات'), make_toc(
-      Object.keys(tocs[bid]).sort((a,b) => a - b)
-        .map(idx => make_toc_elem(tocs[bid][idx], `#r=${bid}:${idx}`))
-    ))
+    const idxs = Object.keys(tocs[bid]).sort((a,b) => a - b)
+    const n = idxs.length
+    idxs[n] = meta[bid][''].N
+    //
+    const ul = document.createElement('ul')
+    ul.className = 'toc'
+    ul.append(...range(n).map(j => make_toc_elem(tocs[bid][idxs[j]], `#r=${bid}:${idxs[j]}`, idxs[j+1] - idxs[j])))
+    el_r.append(mk_el('h2', 'جدول المحتويات'), ul)
   }
 
   return show_all

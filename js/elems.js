@@ -57,19 +57,3 @@ function init_dark () {
 //   })
 // }
 
-function make_toc_elem (text, href) {
-  const li = document.createElement('li')
-  const a = document.createElement('a')
-  a.href = href
-  a.innerText = text
-  li.append(a)
-  return li
-}
-
-function make_toc (array_of_list_items) {
-  const ul = document.createElement('ul')
-  ul.className = 'toc'
-  ul.append(...array_of_list_items)
-  return ul
-}
-
