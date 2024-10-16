@@ -44,7 +44,7 @@ const search = (function () {
     //// adapted from search.js from my other project Recite: https://github.com/noureddin/recite/
     // note: w$ ~~ w, wa$ ~~ wa || w$ , w\b & wa\b ~~ wa?\b
     .replace(/و$/g,     '\0u')
-    .replace(/وا$/g,    '\0W')
+    .replace(/وا$/g,    '\0ū')
     .replace(/وا?(?:\\b|\s)/g, '\0U')  // todo: why ?: not ?=
     .replace(/[هتة](?=\\b|\s|$)/g, '\0T')
     .replace(/[اٱ]/g,   '\0A')
@@ -61,7 +61,7 @@ const search = (function () {
     .replace(/[ء-غف-ي]/g, '$&'+TASH)
     //
     .replace(/\0u/g, 'و'+TASH)                        // w$ matches w
-    .replace(/\0W/g, 'و'+TASH+'(?:ا'+TASH+'|(?= ))')  // wa$ matches wa or w\b (space is \b)
+    .replace(/\0ū/g, 'و'+TASH+'(?:ا'+TASH+'|(?= ))')  // wa$ matches wa or w\b (space is \b)
     .replace(/\0U/g, 'و'+TASH+'(?:ا'+TASH+')? ')      // wa?\b matches wa?\b
     .replace(/\0T/g, '[هتة]'+TASH)
     .replace(/\0A/g, '[ٱاىأإآ\u0670]'+TASH)  // alefs, dagger alef, alef maqsura
