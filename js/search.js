@@ -7,7 +7,7 @@ const search = (function () {
 
   const load_all = () => books.load_many(bkk())
 
-  const PUNT = '(?:[-\\s!?\|\'"(),./:;\\[\\]`{}\u201C\u201D\u2018\u2019\u02BF\u2212\u2013\u2014\u2026\uFD3E\uFD3F\u200B-\u200F\u0305\xAB\xBB]|<[^<>]*>)'
+  const PUNT = '(?:[-^\\s!?\|\'"(),./:;\\[\\]`{}\u201C\u201D\u2018\u2019\u02BF\u2212\u2013\u2014\u2026\uFD3E\uFD3F\u200B-\u200F\u0305\xAB\xBB]|<[^<>]*>)'
   const TASH = '[\u064B-\u0652\u0656\u0640\u0670\u06d6-\u06ed\u08f0-\u08f2]*'
   const HAMZ = 'آأإئؤء'
 
