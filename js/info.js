@@ -43,10 +43,19 @@ const info = (function () {
     const n = idxs.length
     idxs[n] = meta[bid][''].N
     //
-    const ul = make_elem('ul', { className: 'toc' },
-      range(n).map(j => make_toc_elem(tocs[bid][idxs[j]], `#r=${bid}:${idxs[j]}`, idxs[j+1] - idxs[j])))
+    const toc = range(n).map(j =>
+      make_toc_elem(tocs[bid][idxs[j]], `#r=${bid}:${idxs[j]}`, idxs[j+1] - idxs[j]))
     //
-    el_r.append(make_elem('h2', { innerHTML: 'جدول المحتويات' }), ul)
+    if (n === 0) {  // no headers at all (only the length)
+      toc.unshift(make_toc_elem('الكتاب كاملا', `#r=${bid}:0`, idxs[0]))
+    }
+    else if (idxs[0] != 0) {  // the first header is not the very first unit
+      toc.unshift(make_toc_elem('المقدمة', `#r=${bid}:0`, idxs[0]))
+    }
+    //
+    el_r.append(
+      make_elem('h2', { innerHTML: 'جدول المحتويات' }),
+      make_elem('ul', { className: 'toc' }, toc))
   }
 
   function show_books_all (wrong) {
