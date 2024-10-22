@@ -18,6 +18,7 @@
 }
 
 * { font-family: KacstOne, serif; font-size: inherit /* primary for select/button/etc */ }
+small, sup { font-size: 85% }
 
 #p, #p *, #x *, #endmsg { font-family: AmiriQuran }
 

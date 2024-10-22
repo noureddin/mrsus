@@ -21,7 +21,7 @@ const info = (function () {
     const dl = document.createElement('dl')
     if (bk.A && bk.T) { push_dt_dd(dl, 'المؤلف: ',  bk.A) }
     if (tid !== '') { push_dt_dd(dl, 'اللغة: ',   ln[bk.L || 'en']) }
-    if (bk.Y) { push_dt_dd(dl, 'السنة: ',   bk.Y) }
+    if (bk.Y) { push_dt_dd(dl, 'السنة <small>(م)</small>: ',   bk.Y) }
     if (bk.S) { push_dt_dd(dl, 'المصدر: ',  bk.S, 1) }
     if (bk.D) { push_dt_dd(dl, 'الوصف: ',   bk.D, tid !== '') }
     el_r.append(dl)
