@@ -33,6 +33,7 @@ mark { font-family: inherit }
 body {
   --bg: #f8f8f8;
   --fg: #000;
+  --fm: 0.35;     /* opacity of footnote marker (not the footnote itself; that's the same as --tl */
   --tl: 0.6;      /* book title opacity */
   --fa: 0.65;     /* opacity of icon btns in bookfilter */
   --mk: #ff06;    /* <mark>: the matching parts of a result */
@@ -47,6 +48,7 @@ body {
 body.dark {
   --bg: #100;
   --fg: #ddd;
+  --fm: 0.5;
   --tl: 0.8;
   --mk: #650;
   --br: #a00;
@@ -304,6 +306,10 @@ hr {
 }
 
 p { margin: 0.5em }
+
+.fnm {
+  opacity: var(--fm);
+}
 
 .fn {
   font-size: 75%;

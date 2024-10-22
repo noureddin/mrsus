@@ -5,7 +5,7 @@ function split_if_found (txt, regex) {
   return m == null ? [txt] : m.slice(1)
 }
 
-function render (txt, regex) {
+function __render (txt, regex) {
   // highlight all matching substrings, then sanitize and make it into HTML paragraphs
   txt = txt.replace(/\x01/g, '\n\n').replace(/\x02/g, '\n')
   return (regex ? txt.replace(new RegExp(regex, 'igm'), '[[[$&]]]') : txt)
@@ -14,22 +14,44 @@ function render (txt, regex) {
     .replace(/>/g, '&gt;')
     .replace(/\[\[\[/g, '<mark>')
     .replace(/\]\]\]/g, '</mark>')
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+}
+
+function render (txt, regex) {
+  return __render(txt, regex)
     .replace(/^\n*/, '<p>')
     .replace(/\n*$/, '</p>')
     .replace(/\n\n+/g, '</p><p>')
     .replace(/\n/g, '<br>')
+    // footnote marks
+    .replace(/([^\\](?:\\\\)*)(\^+)/g, '$1<span class="fnm">$2</span>')
+    .replace(/\\\^/g, '^')
+    .replace(/\\\\/g, '\\')
+}
+
+function render_footnote (txt, regex) {
+  return __render(txt, regex)
+    .replace(/^/, '<p class="fn">[')
+    .replace(/$/, ']</p>')
+    .replace(/\n/g, '<br>')
 }
 
 function make_unit (titleText, className, txt, q, year) {
-  const [txt0, u] = split_if_found(txt,  /^(.*)\x01\{([^\x01\x02]*)\}$/s)
-  const [txt1, f] = split_if_found(txt0, /^(.*)\x01\[([^\x01\x02]*)\]$/s)
-  // if matches the footnote or url, the matching unit is shown, but no text is highlighted
-  const footnote = f ? '<p class="fn">[' + f + ']</p>' : ''
+  let u, fns = []
+  ;[txt, u] = split_if_found(txt, /^(.*)\x01\{([^\x01\x02]*)\}$/s)
+  while (1) {
+    let fn
+    ;[txt, fn] = split_if_found(txt, /^(.*)\x01\[([^\x01\x02]*)\]$/s)
+    if (fn == null) { break } else { fns.push(fn) }
+  }
+  const footnote = fns.map(fn => render_footnote(fn, q)).reverse().join("")
+  // if matches the url, the matching unit is shown, but no text is highlighted
   const uu = u ? `&emsp;<a href="${u}">⦗🌐⦘</a>` : ''
   const y = year ? ' ('+year+')' : ''
   //
   const title = make_elem('div', { className: 'tl', innerHTML: titleText + y + uu })
-  const unit  = make_elem('div', { className, innerHTML: render(txt1, q) + footnote })
+  const unit  = make_elem('div', { className, innerHTML: render(txt, q) + footnote })
   unit.prepend(title)
   return unit
 }
