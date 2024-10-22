@@ -1,18 +1,18 @@
-const nextbtn = make_elem('div', { id: 'nextbtn', className: 'bigbtn', Children: [
-  make_svgelem('svg', { viewBox: '-5 -5 80 60', Children:[
+const nextbtn = make_elem('div', { id: 'nextbtn', className: 'bigbtn' }, [
+  make_svgelem('svg', { viewBox: '-5 -5 80 60' }, [
     make_svgelem('polygon', { points: '35,50 70,0 0,0' })
-  ]})
-]})
+  ])
+])
 
-const prevbtn = make_elem('div', { id: 'prevbtn', className: 'bigbtn', Children: [
-  make_svgelem('svg', { viewBox: '-5 -5 80 60', Children:[
+const prevbtn = make_elem('div', { id: 'prevbtn', className: 'bigbtn' }, [
+  make_svgelem('svg', { viewBox: '-5 -5 80 60' }, [
     make_svgelem('polygon', { points: '35,0 0,50 70,50' })
-  ]})
-]})
+  ])
+])
 
-const spinner = make_svgelem('svg', { id: 'spinner-svg', viewBox: '-50 -50 100 100', Children: [
+const spinner = make_svgelem('svg', { id: 'spinner-svg', viewBox: '-50 -50 100 100' }, [
   make_svgelem('circle', { id: 'spinner', cx: 0, cy: 0, r: 35, fill: 'none', 'stroke-width': '10', 'stroke-dasharray': '40 30' }),
-]})
+])
 
 // CC0 from https://www.svgrepo.com/svg/419058/book-reading-learning
 // optimized with https://vecta.io/nano then manually modified a bit
@@ -47,13 +47,4 @@ function init_dark () {
   B.classList.toggle('dark', dark)
   el_dark.checked = dark
 }
-
-// function list_of_links (...text_href_pairs) {
-//   return make_elem('ul', { Children:
-//     text_href_pairs
-//       .map(([innerText, href]) => make_elem('li', { Children: [
-//         make_elem('a', { innerText, href })
-//       ]}))
-//   })
-// }
 

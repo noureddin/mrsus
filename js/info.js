@@ -2,8 +2,8 @@ const info = (function () {
 
   const push_dt_dd = (dl, dt, dd, ltr) => {
     const s = document.createElement('span')
-    const t = mk_el('dt', dt)
-    const d = mk_el('dd', dd)
+    const t = make_elem('dt', { innerHTML: dt })
+    const d = make_elem('dd', { innerHTML: dd })
     if (ltr) { d.style.direction = 'ltr' }
     s.append(t, d)
     dl.append(s)
@@ -16,7 +16,7 @@ const info = (function () {
   function show_info (bid, tid) {
     const bk = meta[bid][tid]
     //
-    el_r.append(mk_el(tid === '' ? 'h1' : 'h2', tid === '' ? bk.T : bk.T || bk.A || tid))
+    el_r.append(make_elem(tid === '' ? 'h1' : 'h2', { innerHTML: tid === '' ? bk.T : bk.T || bk.A || tid }))
     //
     const dl = document.createElement('dl')
     if (bk.A && bk.T) { push_dt_dd(dl, 'المؤلف: ',  bk.A) }
@@ -27,13 +27,9 @@ const info = (function () {
     el_r.append(dl)
   }
 
-  const make_toc_elem = (text, href, length) => {
-    const li = document.createElement('li')
-    const a = document.createElement('a')
-    a.innerHTML = text + (length == null ? '' : ' <span>(' + toarab(length) + ')</span>')
-    a.href = href
-    li.append(a)
-    return li
+  const make_toc_elem = (text, href, len) => {
+    const innerHTML = text + (len == null ? '' : ' <span>(' + toarab(len) + ')</span>')
+    return make_elem('li', {}, [ make_elem('a', { href, innerHTML }) ])
   }
 
   function show_book_info (bid) {
@@ -47,26 +43,31 @@ const info = (function () {
     const n = idxs.length
     idxs[n] = meta[bid][''].N
     //
-    const ul = document.createElement('ul')
-    ul.className = 'toc'
-    ul.append(...range(n).map(j => make_toc_elem(tocs[bid][idxs[j]], `#r=${bid}:${idxs[j]}`, idxs[j+1] - idxs[j])))
-    el_r.append(mk_el('h2', 'جدول المحتويات'), ul)
+    const ul = make_elem('ul', { className: 'toc' },
+      range(n).map(j => make_toc_elem(tocs[bid][idxs[j]], `#r=${bid}:${idxs[j]}`, idxs[j+1] - idxs[j])))
+    //
+    el_r.append(make_elem('h2', { innerHTML: 'جدول المحتويات' }), ul)
   }
 
   function show_books_all (wrong) {
     el_r.innerHTML = ''
-    const head = document.createElement('center')
-    head.innerHTML = (wrong ? 'تعذر إيجاد هذا الكتاب. ' : '')
-                   + 'الكتب&nbsp;المتاحة&nbsp;هي:'
-    const ul = document.createElement('ul')
-    ul.className = 'toc'
-    ul.append(...bids.map(bid => make_toc_elem(meta[bid][''].T, `#i=${bid}`)))
-    el_r.append(head, ul)
-  }
+    el_r.append(
+      // head
+      make_elem('center', {
+        innerHTML: (wrong ? 'تعذر إيجاد هذا الكتاب. ' : '')
+                   + 'الكتب&nbsp;المتاحة&nbsp;هي:' }),
+      // books list
+      make_elem('ul', { className: 'toc' },
+        bids.map(bid => make_toc_elem(meta[bid][''].T, `#i=${bid}`)))
+      )
+    }
 
-  // if provided nothing, just show allbooks
-  // if provided wrong id, show allbooks with an error msg
+  // if provided nothing, just show all books
+  // if provided wrong id, show all books with an error msg
   // otherwise show the book info
-  return (bid) => bid === '' ? show_books_all() : bids.indexOf(bid) === -1 ? show_books_all(1) : show_book_info(bid)
+  return (bid) =>
+      bid === '' ? show_books_all()
+    : bids.indexOf(bid) === -1 ? show_books_all(1)
+    : show_book_info(bid)
 
 }())
