@@ -141,13 +141,15 @@ sub _parse_meta {  # {{{1
 
       $v = $v =~ s/&/&amp;/gr =~ s/</&lt;/gr =~ s/>/&gt;/gr;
 
-      if ($k eq 'source') {
+      if ($k eq 'source' || $k eq 'description') {
         $v = $v
-          =~ s|&lt;&lt;&gt;&gt;|<br>|gr
+          =~ s|&lt;&lt;&gt;&gt;|</p><p>|gr
+          =~ s|^\n*|<p>|gr
+          =~ s|\n*$|</p>|gr
           =~ s#\{\{(.*?)\|\|(.*?)\}\}#<a href="$2">$1</a>#gr
           =~ s|\{(.*?)\}|<a href="$1">$1</a>|gr
+          =~ s|\*(.*?)\*|<em>$1</em>|gr
       }
-      if ($k eq 'description') { $v = $v =~ s|&lt;&lt;&gt;&gt;|<br>|gr }
 
       $meta{$cur_id}{$short_attribute{$k}} = $v;
 
