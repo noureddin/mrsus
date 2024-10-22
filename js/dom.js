@@ -30,6 +30,10 @@ function __render (txt, regex) {
     .replace(/>/g, '&gt;')
     .replace(/\[\[\[/g, '<mark>')
     .replace(/\]\]\]/g, '</mark>')
+    .replace(/^\xa0\xa0 +/mg, '&emsp;')  // /^~~ /
+    .replace(/^(&emsp;)\xa0\xa0 +/mg, '$1&emsp;')  // /^~~ ~~ /
+    .replace(/^(&emsp;&emsp;)\xa0\xa0 +/mg, '$1&emsp;')  // /^~~ ~~ ~~ /
+    .replace(/^(&emsp;&emsp;&emsp;)\xa0\xa0 +/mg, '$1&emsp;')  // /^~~ ~~ ~~ ~~ /
     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
     .replace(/\*(.*?)\*/g, '<em>$1</em>')
 }
@@ -51,6 +55,7 @@ function render_footnote (txt, regex) {
     .replace(/^/, '<p class="fn">[')
     .replace(/$/, ']</p>')
     .replace(/\n/g, '<br>')
+    .replace(/\\\\/g, '\\')
 }
 
 function make_unit (titleText, className, txt, q, year) {

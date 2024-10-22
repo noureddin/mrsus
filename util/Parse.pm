@@ -181,6 +181,22 @@ sub _parse_meta {  # {{{1
   return \%meta;
 }
 
+sub _inline_format {  # {{{1
+  return $_[0]
+    # EM DASH
+    =~ s|\h*---$|\N{THIN SPACE}\N{EM DASH}|mgr
+    =~ s|^---\h*|\N{EM DASH}\N{THIN SPACE}|mgr
+    =~ s|\h*---\h*|\N{THIN SPACE}\N{EM DASH}\N{THIN SPACE}|gr
+    # NBSP (unescaped tilde)
+    =~ s|((?<!\\)(?:\\\\)*)~|$1\N{NBSP}|gr
+    =~ s|\\~|~|gr
+      # un-escaping escaped backslashes is done in js/dom.js
+    # AsciiDoc-style quotes: https://docs.asciidoctor.org/asciidoc/latest/text/quotation-marks-and-apostrophes/
+    =~ s|"`|“|gr =~ s|`"|”|gr
+    =~ s|'`|‘|gr =~ s|`'|’|gr
+      # =~ s|(\w)'(\w)|$1’$2|gr =~ s|\\'|'|gr  # intentionally unsupported
+}
+
 sub _parse_body {  # {{{1
   my %ids = map { $_ => undef } @_[1..$#_];
   my $n_ids = scalar @_ - 1;
@@ -213,7 +229,7 @@ sub _parse_body {  # {{{1
       $body[$i]{$cur_id} .= (defined $body[$i]{$cur_id} ? "\n" : '') . $line;
     }
   }
-  # we need to make it into one line:
+  # we need to make it into one line (+ process inline formatting):
   # remove leading and trailing newlines from each units
   # and HTML-sanitize them, and surround each unit with <p> & </p>
   # but if a unit contains an empty line,
@@ -227,7 +243,7 @@ sub _parse_body {  # {{{1
   for my $i (0..$#body) {
     for my $k (keys %ids) {
       # no warnings 'uninitialized';  # if some translations are missing; warned before
-      $body[$i]{$k} = $body[$i]{$k}
+      $body[$i]{$k} = _inline_format $body[$i]{$k}
         # =~ s|&|&amp;|gr
         # =~ s|<|&lt;|gr
         # =~ s|>|&gt;|gr
