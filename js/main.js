@@ -80,6 +80,7 @@ function refresh () {
   }
   else if (state === 'r') {
     filter_select_only(what)  // make bookfilter only has this book checked, if it's a valid book
+    //
     el_q.value = ''  // otherwise search would "take over" the reading mode
     search(false)    // enable search, without loading any books
     read(what, goto && goto.match(/^[0-9]+$/) ? +goto : null)
@@ -87,6 +88,7 @@ function refresh () {
   }
   else if (state === 'i') {
     filter_select_only(what)  // make bookfilter only has this book checked, if it's a valid book
+    //
     el_q.value = ''  // otherwise search would "take over" the info mode
     search(false)    // enable search, without loading any books
     info(what)
@@ -99,6 +101,7 @@ function refresh () {
 }
 
 function filter_select_only (bid) {
+  bid = bid.split(/[:/]/)[0]  // to handle read (`#r=`) parameters
   // select only the current book to search in
   const w = Qid('f_'+bid)
   if (w) {  // only change filters if the book is a valid one

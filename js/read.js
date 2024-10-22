@@ -54,17 +54,34 @@ const read = (function () {
     el_r.innerHTML = ''
     el_r.append(spinner)
     //
-    if (btr.indexOf('/') === -1) {
-      b = btr
-      tids = trid(b).slice(1)
-      is_tids_all = true
+    // if error in parsing the book id or translation id, or no range
+    //   show book info (if bid is correct) or show all books
+    try {
+      if (btr.indexOf('/') === -1) {
+        b = btr
+        if (bids.indexOf(b) === -1) { throw '' }
+        tids = trid(b).slice(1)
+        is_tids_all = true
+      }
+      else {
+        const x = btr.split('/')
+        b = x[0]
+        if (bids.indexOf(b) === -1) { throw '' }
+        tids = x[1].split(',')
+        // validate tids
+        const xtids = new Set(trid(b))
+        for (let t of tids) {
+          if (!xtids.has(t)) { throw '' }
+        }
+        if (tids.length === xtids.size) { is_tids_all = true }
+      }
+      if (ix == null) { throw '' }  // no range (no `:`)
     }
-    else {
-      const x = btr.split('/')
-      b = x[0]
-      tids = x[1].split(',')
+    catch {
+      // L.hash = 'i=' + b  // switch to the info view, and sync the url
+      info(b)  // switch to the info view, but keep the url
+      return
     }
-    //
     if (ix.indexOf('-') === -1) {
       i_bgn = i_end = +ix
     }
