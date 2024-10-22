@@ -6,11 +6,15 @@ const read = (function () {
   let tids, is_tids_all
   let i_bgn
   let i_end
-  let last
+  let last  // last index in the current book
+  let wantlast
 
   function update_hash () {
     const tt = is_tids_all ? '' : '/' + tids.join(',')
-    set_hash('r=' + b + tt + ':' + i_bgn + '-' + i_end)
+    const iB = wantlast && i_bgn === last ? '$' : i_bgn
+    const iE = wantlast && i_end === last ? '$' : i_end
+    const ii = iB === iE ? iB : iB + '-' + iE
+    set_hash('r=' + b + tt + ':' + ii)
   }
 
   function prepend () {
@@ -33,7 +37,6 @@ const read = (function () {
 
   function really_read (goto_idx) {
     if (!books.load(b)) { setTimeout(really_read, 100, goto_idx); return }
-    last = books.access(b).length - 1
     el_r.innerHTML = ''
     //
     if (i_bgn > 0) { el_r.append(prevbtn) }
@@ -82,14 +85,25 @@ const read = (function () {
       info(b)  // switch to the info view, but keep the url
       return
     }
+    //
+    last = meta[b][''].N - 1
+    //
     if (ix.indexOf('-') === -1) {
-      i_bgn = i_end = +ix
+      wantlast = ix === '$'
+      i_bgn = i_end = wantlast ? last : +ix
     }
     else {
       const s = ix.split('-')
-      i_bgn = +s[0]
-      i_end = +s[1]
+      wantlast = s[1] === '$' || s[0] === '$'
+      i_bgn = s[0] === '$' ? last : +s[0]
+      i_end = s[1] === '$' ? last : +s[1]
     }
+    if ( isNaN(i_bgn) && !isNaN(i_end)) { i_bgn = i_end }
+    if (!isNaN(i_bgn) &&  isNaN(i_end)) { i_end = i_bgn }
+    if ( isNaN(i_bgn) &&  isNaN(i_end)) { i_bgn = i_end = 0 }
+    //
+    if (i_bgn > last) { i_bgn = last }
+    if (i_end > last) { i_end = last }
     //
     prevbtn.onclick = () => {
       --i_bgn
@@ -105,6 +119,7 @@ const read = (function () {
     }
     //
     // console.log(b, tids, i_bgn, i_end)
+    update_hash()
     really_read(goto_idx)
     // return [b, i_bgn, i_end]
   }
