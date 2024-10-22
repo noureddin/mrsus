@@ -78,7 +78,13 @@ for my $name (map s,.*/,,r, glob 'data/*') {
     my $ser = serialize(@parse);
     if (!-e $outz || hashstr(slurp_zstd($outz)) ne hashstr($ser)) {
       write_file $ser, '>', $o;
-      system 'zstd', '-k', '-9', $o;
+      system 'zstd', '-q', '-f', '-k', '-9', $o;
+      # -q because no stdout msgs are needed in the build script
+      # -f because we are already sure we want to overwrite it (if -e)
+      # -k because we keep the uncompressed file for debugging etc
+      # -9 because its medium level (zstd is usually 1-19), and
+      #    because the next levels (10+) provide each
+      #      a small gain in size reduction compared to 9.
       unlink $o;
     }
     else {
