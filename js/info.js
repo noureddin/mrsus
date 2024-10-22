@@ -16,7 +16,7 @@ const info = (function () {
   function show_info (bid, tid) {
     const bk = meta[bid][tid]
     //
-    el_r.append(make_elem(tid === '' ? 'h1' : 'h2', { innerHTML: tid === '' ? bk.T : bk.T || bk.A || tid }))
+    el_r.append(make_elem(tid === '' ? 'h1' : 'h2', { innerHTML: title_of(bid, tid) }))
     //
     const dl = document.createElement('dl')
     if (bk.A && bk.T) { push_dt_dd(dl, 'المؤلف: ',  bk.A) }
@@ -67,7 +67,7 @@ const info = (function () {
                    + 'الكتب&nbsp;المتاحة&nbsp;هي:' }),
       // books list
       make_elem('ul', { className: 'toc' },
-        bids.map(bid => make_toc_elem(meta[bid][''].T, `#i=${bid}`)))
+        bids.map(bid => make_toc_elem(title_of(bid, ''), `#i=${bid}`)))
       )
     }
 

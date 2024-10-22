@@ -1,5 +1,21 @@
 'use strict'
 
+function title_of (bid, tid) {
+  const bk = meta[bid][tid]
+  // TODO: allow better customization in the metadata to the displayed title
+  return tid === ''
+    ? bk.T && bk.A
+      ? bk.T + '، ' + bk.A
+      : bk.T ? bk.T
+      : bk.A ? bk.A
+      : tid
+    : bk.T && bk.A
+      ? bk.T + ', ' + bk.A
+      : bk.T ? bk.T
+      : bk.A ? bk.A
+      : tid
+}
+
 function split_if_found (txt, regex) {
   const m = txt.match(regex)
   return m == null ? [txt] : m.slice(1)
@@ -66,7 +82,7 @@ function _mksrc (bk, b, i, q) {
   const i_end = tocs[b][i+1] ? i : i+1
   const ix = i_bgn === i_end ? i_bgn : i_bgn + '-' + i_end
   return make_unit(
-      meta[b][''].T + (tl.length ? ' :: ' + tl : '')
+      title_of(b, '') + (tl.length ? ' :: ' + tl : '')
       + readsvg.replace(/^<a/, `<a href="#r=${b}:${ix}&to=${i}" `)
       + infosvg.replace(/^<a/, `<a href="#i=${b}" `)
       ,
@@ -74,7 +90,7 @@ function _mksrc (bk, b, i, q) {
 }
 
 function _mkdst (bk, b, i, t, q) {
-  return make_unit(meta[b][t].T || meta[b][t].A || t,
+  return make_unit(title_of(b, t),
     b+' dst '+t, bk[t], q, meta[b][t].Y)
 }
 
