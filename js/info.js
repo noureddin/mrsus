@@ -30,13 +30,13 @@ const info = (function () {
   const make_toc_elem = (text, href, length) => {
     const li = document.createElement('li')
     const a = document.createElement('a')
+    a.innerHTML = text + (length == null ? '' : ' <span>(' + toarab(length) + ')</span>')
     a.href = href
-    a.innerHTML = text + ' <span>(' + toarab(length) + ')</span>'
     li.append(a)
     return li
   }
 
-  function show_all (bid) {
+  function show_book_info (bid) {
     el_r.innerHTML = ''
 
     // info
@@ -53,6 +53,20 @@ const info = (function () {
     el_r.append(mk_el('h2', 'جدول المحتويات'), ul)
   }
 
-  return show_all
+  function show_books_all (wrong) {
+    el_r.innerHTML = ''
+    const head = document.createElement('center')
+    head.innerHTML = (wrong ? 'تعذر إيجاد هذا الكتاب. ' : '')
+                   + 'الكتب&nbsp;المتاحة&nbsp;هي:'
+    const ul = document.createElement('ul')
+    ul.className = 'toc'
+    ul.append(...bids.map(bid => make_toc_elem(meta[bid][''].T, `#i=${bid}`)))
+    el_r.append(head, ul)
+  }
+
+  // if provided nothing, just show allbooks
+  // if provided wrong id, show allbooks with an error msg
+  // otherwise show the book info
+  return (bid) => bid === '' ? show_books_all() : bids.indexOf(bid) === -1 ? show_books_all(1) : show_book_info(bid)
 
 }())

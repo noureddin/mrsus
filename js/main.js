@@ -89,22 +89,7 @@ function refresh () {
     filter_select_only(what)  // make bookfilter only has this book checked, if it's a valid book
     el_q.value = ''  // otherwise search would "take over" the info mode
     search(false)    // enable search, without loading any books
-    // if provided nothing, just show allbooks
-    // if provided wrong id, show allbooks with an error msg
-    // otherwise show the book info
-    const all = what === ''
-    const ok = bids.indexOf(what) !== -1
-    if (ok) {
-      info(what)
-    }
-    else {
-      const head = document.createElement('center')
-      head.innerHTML = (all ? '' : 'تعذر إيجاد هذا الكتاب. ') + 'الكتب&nbsp;المتاحة&nbsp;هي:'
-      //
-      const toc = make_toc(bids.map(bid => make_toc_elem(meta[bid][''].T, `#i=${bid}`)))
-      //
-      el_r.append(head, toc)
-    }
+    info(what)
   }
   else {
     search()
